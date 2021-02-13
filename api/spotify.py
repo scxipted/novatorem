@@ -24,12 +24,10 @@ RECENTLY_PLAYING_URL = (
 
 app = Flask(__name__)
 
-
 def getAuth():
     return b64encode(f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_SECRET_ID}".encode()).decode(
         "ascii"
     )
-
 
 def refreshToken():
     data = {
@@ -47,7 +45,6 @@ def refreshToken():
         print("\n---\n")
         raise KeyError(str(response.json()))
 
-
 def recentlyPlayed():
     token = refreshToken()
     headers = {"Authorization": f"Bearer {token}"}
@@ -57,7 +54,6 @@ def recentlyPlayed():
         return {}
     return response.json()
 
-
 def nowPlaying():
     token = refreshToken()
     headers = {"Authorization": f"Bearer {token}"}
@@ -66,7 +62,6 @@ def nowPlaying():
     if response.status_code == 204:
         return {}
     return response.json()
-
 
 def barGen(barCount):
     barCSS = ""
@@ -81,11 +76,9 @@ def barGen(barCount):
         left += 4
     return barCSS
 
-
 def loadImageB64(url):
     resposne = requests.get(url)
     return b64encode(resposne.content).decode("ascii")
-
 
 def makeSVG(data):
     barCount = 84
@@ -117,9 +110,9 @@ def makeSVG(data):
 
     return render_template("spotify.html.j2", **dataDict)
 
-
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
+
 def catch_all(path):
     data = nowPlaying()
     svg = makeSVG(data)
@@ -128,7 +121,6 @@ def catch_all(path):
     resp.headers["Cache-Control"] = "s-maxage=1"
 
     return resp
-
 
 if __name__ == "__main__":
     app.run(debug=True)
